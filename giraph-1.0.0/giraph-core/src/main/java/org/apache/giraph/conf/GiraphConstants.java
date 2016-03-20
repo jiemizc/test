@@ -657,7 +657,7 @@ public interface GiraphConstants {
 	 */
 	BooleanConfOption STATIC_GRAPH = new BooleanConfOption(
 			"giraph.isStaticGraph", false);
-
+	BooleanConfOption HALT_COMPUTE_FOR_LOW_MEM = new BooleanConfOption("giraph.computation.halt", false);
 	FloatConfOption MAX_MEM_PERCENT_FOR_COMPUTE = new FloatConfOption(
 			"giraph.computation.halt.mempercent", 0.85f);
 }

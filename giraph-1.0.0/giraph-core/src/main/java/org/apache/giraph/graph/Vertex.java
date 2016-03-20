@@ -211,6 +211,7 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
 	/**
 	 * when using online compute, user must supply this function to consume a
 	 * single msg
+	 * $notice$: better not hold the msg reference since we need to clear the message after this method  
 	 * 
 	 * @param msg
 	 */

@@ -186,6 +186,17 @@ public class ComputeCallable<I extends WritableComparable, V extends Writable, E
 			try {
 				PartitionStats partitionStats = null;
 				LOG.info("start compute partition" + partitionId + " memstatus= " + MemoryUtils.getRuntimeMemoryStats());
+				int t = 0;
+				int MAX_WAIT_TIME=500;
+				while(configuration.isHaltComputeForLowMemEnabled() &&
+						((MemoryUtils.totalMemoryMB()-MemoryUtils.freeMemoryMB())/ MemoryUtils.maxMemoryMB())>configuration.getMemPercentForHalt()){
+					Thread.sleep(1000);
+					LOG.info("not enough memory to run, has slept for "+ (t++) +" seconds ");
+					if(t>500){
+						LOG.info("no enough memory, time out!");
+						break;
+					}
+				}
 				if (configuration.useOnlineCompute())
 					partitionStats = isHot ? computePartitionForMOC(partition)
 							: computePartitionForDOC(partition);
@@ -397,17 +408,6 @@ public class ComputeCallable<I extends WritableComparable, V extends Writable, E
 			graphState.setPartitionContext(partition.getPartitionContext());
 
 			for (Vertex<I, V, E, M> vertex : partition) {
-				// Make sure every vertex has this thread's
-				// graphState before computing
-				int sleepTime = 0;
-				while ((MemoryUtils.totalMemoryMB() - MemoryUtils
-						.freeMemoryMB()) / MemoryUtils.maxMemoryMB() > configuration
-							.getMemPercentForHalt()) {
-					Thread.sleep(1000);
-					sleepTime++;
-					LOG.info("memory occupation exceeds 0.85, computation has slept for a total of "
-							+ sleepTime + " seconds, memstatus:" + MemoryUtils.getRuntimeMemoryStats());
-				}
 				vertex.setGraphState(graphState);
 				if (!vertex.isHalted()) {
 					context.progress();

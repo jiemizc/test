@@ -1023,4 +1023,8 @@ public class GiraphConfiguration extends Configuration implements
 	public float getMemPercentForHalt(){
 		return MAX_MEM_PERCENT_FOR_COMPUTE.get(this);
 	}
+	
+	public boolean isHaltComputeForLowMemEnabled() {
+		return HALT_COMPUTE_FOR_LOW_MEM.get(this);
+	}
 }

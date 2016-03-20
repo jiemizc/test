@@ -151,6 +151,7 @@ public class OnlineComputeMessageStore<I extends WritableComparable, M extends W
 				// extendedDataOutput);
 				// }
 			}
+			messages = null;
 		}
 	}
 

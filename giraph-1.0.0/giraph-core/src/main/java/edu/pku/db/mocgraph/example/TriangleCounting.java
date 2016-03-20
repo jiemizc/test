@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.giraph.aggregators.LongSumAggregator;
 import org.apache.giraph.aggregators.TextAggregatorWriter;
+import org.apache.giraph.conf.FloatConfOption;
 import org.apache.giraph.edge.HashMapEdges;
 import org.apache.giraph.io.formats.GiraphFileInputFormat;
 import org.apache.giraph.io.formats.IntIntNullTextInputFormat;
@@ -61,6 +62,7 @@ public class TriangleCounting implements Tool {
 		options.addOption("pn", "partitionNum", true,
 				"partition number per worker");
 		options.addOption("ooc", "outOfCore", false, "run in outofcore mode");
+		options.addOption("hp", "halt percent", true, "stop sending msgs if mem usage exceeds hp");
 		options.addOption(
 				"nimp",
 				"numOfInMemoryPartition",
@@ -149,6 +151,12 @@ public class TriangleCounting implements Tool {
 				job.getConfiguration().setBoolean(
 						"giraph.useThreadLocalAggregators", true);
 			}
+		}
+		
+		if (cmd.hasOption("hp")) {
+			float hp = Float.parseFloat(cmd.getOptionValue("hp"));
+			job.getConfiguration().setBoolean("giraph.computation.halt", true);
+			job.getConfiguration().setFloat("giraph.computation.halt.mempercent",  0.75f);
 		}
 
 		job.getConfiguration().setOutEdgesClass(HashMapEdges.class);
